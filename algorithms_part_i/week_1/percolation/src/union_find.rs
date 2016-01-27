@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct UF {
     pub count: usize,
     ids: Vec<usize>,
