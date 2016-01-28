@@ -78,13 +78,8 @@ impl Percolator {
         }
     }
 
-    pub fn is_open(&self, col: usize, row: usize) -> bool {
-        false
-    }
-    pub fn is_full(&self, col: usize, row: usize) -> bool {
-        false
-    }
-    pub fn is_percolated(&self, col: usize, row: usize) -> bool {
-        false
+    pub fn is_percolated(&mut self) -> bool {
+        let end = self.chart.count - 1;
+        self.chart.connected(0, end)
     }
 }

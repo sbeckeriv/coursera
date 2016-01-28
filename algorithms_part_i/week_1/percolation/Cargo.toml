@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = ["Stephen Becker IV <github@deathbyescalator.com>"]
 [dependencies]
 algorithms-helpers = {git = 'https://github.com/sbeckeriv/rust-algorithms-helpers'}
-
+rand = "0.3"
