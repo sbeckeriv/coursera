@@ -12,7 +12,9 @@ impl UF {
             count: count,
         }
     }
-
+    pub fn len(&self) -> usize {
+        self.ids.len()
+    }
     pub fn union(&mut self, left: usize, right: usize) {
         let left_id = self.find(left);
         // println!("found left {}", left_id);

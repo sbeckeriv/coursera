@@ -34,9 +34,12 @@ impl fmt::Display for Percolator {
 impl Percolator {
     pub fn new(height: usize, width: usize) -> Self {
         let offset_height = height + 2;
-        let mut chart = UF::new(&(offset_height * width));
+        let uf_size = offset_height * width;
+        println!("len{}", uf_size);
+        let mut chart = UF::new(&uf_size);
         for i in 1..width {
             chart.union(i, 0);
+            chart.union(uf_size - 1 - i, uf_size - 1);
         }
         // map the top and bottom
         Percolator {
@@ -50,7 +53,6 @@ impl Percolator {
         let isize_col = col as isize;
         // offset only applies to the chart
         let isize_row = (row + 1) as isize;
-
         let grid_index = self.index_for(isize_col, isize_row - 1).unwrap();
         let index = self.index_for(isize_col, isize_row).unwrap();
         if !self.grid[grid_index] {
@@ -60,17 +62,19 @@ impl Percolator {
                               self.index_for(isize_col - 1, isize_row),
                               self.index_for(isize_col, isize_row + 1),
                               self.index_for(isize_col, isize_row - 1)];
+            println!("col: {}, row: {}", isize_col, isize_row);
+            println!("{:?}", directions);
+
             for direction in &directions {
                 if direction.is_some() {
                     self.chart.union(direction.unwrap(), index);
                 }
             }
-
         }
     }
 
     fn index_for(&self, col: isize, row: isize) -> Option<usize> {
-        if col >= 0 && row >= 0 && self.width > col && self.height > row {
+        if col >= 0 && row >= 0 && self.width > col && self.height + 2 > row {
             let index = (self.width * row + col) as usize;
             Some(index)
         } else {
@@ -79,7 +83,7 @@ impl Percolator {
     }
 
     pub fn is_percolated(&mut self) -> bool {
-        let end = self.chart.count - 1;
+        let end = self.chart.len() - 1;
         self.chart.connected(0, end)
     }
 }

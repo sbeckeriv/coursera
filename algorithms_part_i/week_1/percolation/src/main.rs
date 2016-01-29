@@ -7,12 +7,15 @@ use percolation::Percolator;
 fn main() {
 
     let mut rng = rand::thread_rng();
-    let random_index = Range::new(0, 19);
+    let random_index = Range::new(0, 20);
     let mut p = Percolator::new(20,20);
     p.open(0,0);
     for i in 1..6000{
-        println!("{}",i);
-        p.open(random_index.ind_sample(&mut rng), random_index.ind_sample(&mut rng));
+        let row = random_index.ind_sample(&mut rng);
+        let col = random_index.ind_sample(&mut rng);
+        println!("run:{} row:{} col:{}",i, row, col);
+
+        p.open(row, col);
         if p.is_percolated(){
             println!("{}",p);
             println!("{:?}",p);
