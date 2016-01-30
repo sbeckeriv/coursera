@@ -1,12 +1,14 @@
 extern crate rand;
-use rand::Rng;
 use rand::distributions::{IndependentSample, Range};
+use rand::{Rng, SeedableRng, StdRng};
 mod union_find;
 mod percolation;
 use percolation::Percolator;
 fn main() {
 
-    let mut rng = rand::thread_rng();
+    let seed: &[_] = &[1, 2, 3, 4];
+    let mut rng: rand::StdRng = rand::SeedableRng::from_seed(seed);
+    //let mut rng = rand::thread_rng();
     let random_index = Range::new(0, 20);
     let mut p = Percolator::new(20,20);
     p.open(0,0);
