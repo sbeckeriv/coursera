@@ -42,12 +42,12 @@ impl Percolator {
     pub fn new(height: usize, width: usize) -> Self {
         let offset_height = height + 2;
         let uf_size = offset_height * width;
-        println!("len{}", uf_size);
         let mut chart = UF::new(&uf_size);
-        for i in 1..width {
+        for i in 0..width * 2 {
             chart.union(i, 0);
             chart.union(uf_size - 1 - i, uf_size - 1);
         }
+        println!("{:?}", chart);
         // map the top and bottom
         Percolator {
             chart: chart,
@@ -59,30 +59,49 @@ impl Percolator {
     pub fn open(&mut self, col: usize, row: usize) {
         let isize_col = col as isize;
         // offset only applies to the chart
-        let isize_row = (row + 1) as isize;
-        let grid_index = self.index_for(isize_col, isize_row - 1).unwrap();
-        let index = self.index_for(isize_col, isize_row).unwrap();
-        if !self.grid[grid_index] {
-            self.grid[grid_index] = true;
+        let isize_row = row as isize;
+        let base_index = self.index_for(isize_col, isize_row).unwrap();
+        if !self.grid[base_index] {
+            self.grid[base_index] = true;
             // make a match?
-            let directions = [self.index_for(isize_col + 1, isize_row),
-                              self.index_for(isize_col - 1, isize_row),
-                              self.index_for(isize_col, isize_row + 1),
-                              self.index_for(isize_col, isize_row - 1)];
+            let directions = [(isize_col + 1, isize_row),
+                              (isize_col - 1, isize_row),
+                              (isize_col, isize_row + 1),
+                              (isize_col, isize_row - 1)];
             println!("col: {}, row: {}", isize_col, isize_row);
-            println!("{:?}", directions);
+            // println!("{:?}", directions);
 
             for direction in &directions {
-                if direction.is_some() {
-                    self.chart.union(direction.unwrap(), index);
+                let index = self.index_for(direction.0, direction.1);
+                let chart_index = self.index_for_chart(direction.0, direction.1 + 1);
+                if index.is_some() {
+                    let index = index.unwrap();
+                    // println!("index:{} directions:{:?}", index, direction);
+                    if self.grid[index] {
+                        if chart_index.is_some() {
+                            self.chart.union(chart_index.unwrap(), base_index);
+                        }
+                    }
+                } else if chart_index.is_some() {
+                    self.chart.union(chart_index.unwrap(), base_index);
                 }
+
             }
 
-            println!("{:?}", self);
+            println!("{}", self);
         }
     }
 
     fn index_for(&self, col: isize, row: isize) -> Option<usize> {
+        if col >= 0 && row >= 0 && self.width > col && self.height > row {
+            let index = (self.width * row + col) as usize;
+            Some(index)
+        } else {
+            None
+        }
+    }
+    // includes the space offset for top and bottom
+    fn index_for_chart(&self, col: isize, row: isize) -> Option<usize> {
         if col >= 0 && row >= 0 && self.width > col && self.height + 2 > row {
             let index = (self.width * row + col) as usize;
             Some(index)
