@@ -10,7 +10,14 @@ pub struct Percolator {
 
 impl fmt::Debug for Percolator {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}\n", self.chart)
+        let width = self.width as usize;
+        for (index, location) in self.chart.ids.iter().enumerate() {
+            if index > 0 && index % width == 0 {
+                write!(f, "\n");
+            }
+            write!(f, "{:>5}", *location);
+        }
+        write!(f, "\n")
     }
 }
 
@@ -70,6 +77,8 @@ impl Percolator {
                     self.chart.union(direction.unwrap(), index);
                 }
             }
+
+            println!("{:?}", self);
         }
     }
 

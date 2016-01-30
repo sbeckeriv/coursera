@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct UF {
     pub count: usize,
-    ids: Vec<usize>,
+    pub ids: Vec<usize>,
 }
 
 impl UF {
